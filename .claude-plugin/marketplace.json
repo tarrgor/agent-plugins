@@ -9,7 +9,7 @@
       "name": "sdd-workflow",
       "source": "./plugins/sdd-workflow",
       "description": "Spec-driven development workflow: kick off a spec, break it into GitHub issues, implement, review, merge, and run project meetings.",
-      "version": "1.0.0-pre4"
+      "version": "1.0.0-pre5"
     }
   ]
 }
