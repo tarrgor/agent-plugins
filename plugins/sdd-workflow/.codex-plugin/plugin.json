@@ -1,6 +1,6 @@
 {
   "name": "sdd-workflow",
-  "version": "1.0.0-pre2",
+  "version": "1.0.0-pre3",
   "description": "Spec-driven development workflow: kick off a spec, break it into GitHub issues, implement, review, merge, and run project meetings.",
   "keywords": [
     "workflow",
@@ -21,6 +21,9 @@
       "Read",
       "Write"
     ],
+    "brandColor": "#0F766E",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
     "websiteURL": "https://github.com/tarrgor/sdd-workflow-skills",
     "defaultPrompt": [
       "Kick off a spec-driven project.",
