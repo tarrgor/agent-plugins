@@ -23,15 +23,37 @@ claude plugin marketplace add tarrgor/agent-plugins
 claude plugin install sdd-workflow@agent-plugins
 ```
 
-**Codex:**
+**Codex CLI:** the Codex web app can't add custom marketplaces; use the CLI with a local clone (needs a Codex CLI with `codex plugin` commands):
 
 ```bash
-codex plugin marketplace add /absolute/path/to/agent-plugins
+git clone https://github.com/tarrgor/agent-plugins.git
+```
+
+```bash
+codex plugin marketplace add "$PWD/agent-plugins"
 ```
 
 ```bash
 codex plugin add sdd-workflow@agent-plugins
 ```
+
+Codex installs a copy into its cache, so updating takes a pull and a reinstall:
+
+```bash
+git -C agent-plugins pull
+```
+
+```bash
+codex plugin remove sdd-workflow@agent-plugins
+```
+
+```bash
+codex plugin add sdd-workflow@agent-plugins
+```
+
+Start a new task afterwards; `codex plugin list --marketplace agent-plugins` shows what is installed.
+
+**Codex web app:** upload the Codex ZIP from the plugin's GitHub release instead, e.g. `sdd-workflow-codex-<version>.zip` from [sdd-workflow-skills releases](https://github.com/tarrgor/sdd-workflow-skills/releases). Don't upload GitHub's source ZIP.
 
 Plugins are pinned to release tags and carry the tag's version, so clients update only when a new release is synced.
 
