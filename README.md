@@ -82,3 +82,7 @@ python scripts/sync.py --check
 ```
 
 CI runs both on every push and pull request.
+
+## License
+
+[MIT](LICENSE) © tarrgor. Each plugin under `plugins/<name>/` carries its own license file from its source repository.
