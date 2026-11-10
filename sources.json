@@ -3,7 +3,7 @@
     {
       "name": "sdd-workflow",
       "repo": "https://github.com/tarrgor/sdd-workflow-skills.git",
-      "ref": "v1.0.0-pre1",
+      "ref": "v1.0.0-pre2",
       "include": [
         "LICENSE",
         ".claude-plugin/plugin.json",
