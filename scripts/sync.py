@@ -33,6 +33,9 @@ def checkout(repo: str, ref: str, dest: Path) -> None:
 def select(src: Path, patterns: list[str]) -> list[Path]:
     files = set()
     for pattern in patterns:
+        # A trailing '**' matches only directories before Python 3.13.
+        if pattern.endswith('**'):
+            pattern += '/*'
         for path in src.glob(pattern):
             if path.is_file() and not SKIP & set(path.relative_to(src).parts) and path.suffix != '.pyc':
                 files.add(path)
