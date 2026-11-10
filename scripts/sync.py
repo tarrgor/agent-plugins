@@ -6,7 +6,6 @@ Usage:
   python scripts/sync.py --check              # fail if plugins/ or catalogs are out of date
 """
 import argparse
-import filecmp
 import json
 from pathlib import Path
 import re
@@ -101,12 +100,14 @@ def build(root: Path, sources: dict) -> None:
         (root / rel).write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
 
 
-def same_tree(a: Path, b: Path) -> bool:
-    cmp = filecmp.dircmp(a, b)
-    if cmp.left_only or cmp.right_only or cmp.funny_files:
-        return False
-    _, mismatch, errors = filecmp.cmpfiles(a, b, cmp.common_files, shallow=False)
-    return not mismatch and not errors and all(same_tree(a / d, b / d) for d in cmp.common_dirs)
+def tree_diff(a: Path, b: Path) -> list[str]:
+    """Relative paths that are missing on either side or differ in content."""
+    def files(root: Path) -> dict[str, Path]:
+        return {p.relative_to(root).as_posix(): p for p in root.rglob('*')
+                if p.is_file() and not SKIP & set(p.relative_to(root).parts)} if root.is_dir() else {}
+    fa, fb = files(a), files(b)
+    return sorted(k for k in fa.keys() | fb.keys()
+                  if k not in fa or k not in fb or fa[k].read_bytes() != fb[k].read_bytes())
 
 
 def main() -> int:
@@ -130,10 +131,11 @@ def main() -> int:
         with tempfile.TemporaryDirectory() as tmp:
             fresh = Path(tmp)
             build(fresh, sources)
-            stale = [rel for rel in ('plugins', '.claude-plugin', '.agents')
-                     if not (ROOT / rel).is_dir() or not same_tree(ROOT / rel, fresh / rel)]
+            stale = [f'{rel}/{path}' for rel in ('plugins', '.claude-plugin', '.agents')
+                     for path in tree_diff(ROOT / rel, fresh / rel)]
         if stale:
-            print(f"Out of date: {', '.join(stale)}. Run python scripts/sync.py and commit.", file=sys.stderr)
+            print('Out of date:', *stale, sep='\n  ', file=sys.stderr)
+            print('Run python scripts/sync.py and commit.', file=sys.stderr)
             return 1
         print('plugins/ and catalogs match sources.json.')
         return 0
