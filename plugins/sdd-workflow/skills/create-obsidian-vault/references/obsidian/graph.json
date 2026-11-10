@@ -1,0 +1,27 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    { "query": "path:SPEC", "color": { "a": 1, "rgb": 5016575 } },
+    { "query": "path:Knowledge", "color": { "a": 1, "rgb": 4176720 } },
+    { "query": "path:Inbox", "color": { "a": 1, "rgb": 14917640 } },
+    { "query": "path:Reports", "color": { "a": 1, "rgb": 10711543 } },
+    { "query": "path:Archive", "color": { "a": 1, "rgb": 8421504 } }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.2,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.5,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 1
+}

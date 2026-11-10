@@ -1,0 +1,17 @@
+{
+  "file-explorer": true,
+  "global-search": true,
+  "switcher": true,
+  "graph": true,
+  "backlink": true,
+  "outgoing-link": true,
+  "tag-pane": true,
+  "outline": true,
+  "word-count": true,
+  "file-recovery": true,
+  "bases": true,
+  "canvas": true,
+  "sync": false,
+  "publish": false,
+  "webviewer": false
+}

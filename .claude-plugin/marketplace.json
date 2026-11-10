@@ -1,0 +1,15 @@
+{
+  "name": "agent-plugins",
+  "description": "tarrgor's plugins for Claude.",
+  "owner": {
+    "name": "tarrgor"
+  },
+  "plugins": [
+    {
+      "name": "sdd-workflow",
+      "source": "./plugins/sdd-workflow",
+      "description": "Spec-driven development workflow: kick off a spec, break it into GitHub issues, implement, review, merge, and run project meetings.",
+      "version": "1.0.0-pre1"
+    }
+  ]
+}

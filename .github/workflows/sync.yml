@@ -1,0 +1,45 @@
+name: Sync plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: Plugin name from sources.json
+        required: true
+      ref:
+        description: Release tag to pin, e.g. v1.2.0
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Vendor the tagged release
+        env:
+          PLUGIN: ${{ inputs.plugin }}
+          REF: ${{ inputs.ref }}
+        run: |
+          python scripts/sync.py --plugin "$PLUGIN" --ref "$REF"
+          python scripts/validate.py
+      - name: Commit
+        env:
+          PLUGIN: ${{ inputs.plugin }}
+          REF: ${{ inputs.ref }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then echo 'Already up to date.'; exit 0; fi
+          git commit -m "Sync $PLUGIN to $REF"
+          git push

@@ -1,0 +1,211 @@
+<!doctype html>
+<!--
+  The status page `project-status` writes to a project's root on every run, through
+  `scripts/status-page.py`, which puts the report in place of the placeholder below. Everything on
+  the page is the skill's reading; this file only lays it out. Strings are inserted as text, never
+  as markup: issue and PR titles are user-written. No network, so it opens from file://.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project status</title>
+<style>
+:root {
+  --bg: #f7f8fa; --surface: #ffffff; --ink: #1b1f24; --muted: #646b75; --line: #e1e4e8;
+  --accent: #2f5f9e;
+  --done: #3f7d4e; --active: #c08a1e; --todo: #b4b9c0; --attention: #b3402f;
+  --closed: #9cc3a4; --review: #e6b866; --ready: #a9c4e8; --blocked: #f0b8ad; --parked: #d7c4ea; --progress: #f2d9a6;
+  --on-dark: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a; --surface: #1f2226; --ink: #e6e8eb; --muted: #9aa1ab; --line: #33373d;
+    --accent: #79a8e8;
+    --done: #5fa36f; --active: #d9a441; --todo: #50555c; --attention: #d9614c;
+    --closed: #3d6447; --review: #8a6a2c; --ready: #2f4b70; --blocked: #6e3329; --parked: #4f3a6b; --progress: #6b5526;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font: 600 28px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0 0 6px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  margin: 32px 0 10px; }
+.meta { color: var(--muted); font-size: 13px; }
+.pill { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: 12px;
+  border: 1px solid var(--line); background: var(--surface); margin: 0 6px 4px 0; }
+.warn { color: var(--attention); font-size: 14px; margin: 6px 0 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.next { border-left: 5px solid var(--accent); margin-top: 20px; }
+.next .label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.next .action { font-size: 18px; margin: 4px 0; }
+.next code { background: var(--bg); padding: 1px 6px; border-radius: 4px; }
+.pipeline { display: flex; flex-wrap: wrap; gap: 6px; }
+.stage { padding: 4px 10px; border-radius: 6px; font-size: 13px; background: var(--todo); color: var(--ink); }
+.stage.current { background: var(--accent); color: var(--on-dark); font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.stat .v { font-size: 22px; font-weight: 600; white-space: nowrap; }
+.stat .v.attention { color: var(--attention); }
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+.bar > span { display: block; height: 100%; background: var(--done); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.tile { border-radius: 8px; padding: 8px; min-height: 76px; border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px; }
+.tile .n { font-weight: 600; font-size: 13px; }
+.tile .t { font-size: 12px; line-height: 1.3; flex: 1; overflow: hidden; }
+.tile .s { font-size: 11px; color: var(--muted); }
+.closed { background: var(--closed); }
+.in-review { background: var(--review); }
+.ready { background: var(--ready); }
+.blocked { background: var(--blocked); }
+.parked { background: var(--parked); }
+.in-progress { background: var(--progress); }
+.open { background: var(--surface); }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px;
+  margin-right: 4px; border: 1px solid var(--line); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.card h3 { margin: 0 0 6px; font-size: 15px; }
+.card p { margin: 0; }
+ul { margin: 0; padding-left: 18px; }
+li { margin: 2px 0; }
+.skill { color: var(--accent); font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+td, th { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+.dot::before { content: "●"; margin-right: 4px; }
+.dot.passing::before { color: var(--done); }
+.dot.failing::before { color: var(--attention); }
+.dot.pending::before { color: var(--active); }
+.dot.none::before { content: "○"; opacity: .5; }
+footer { margin-top: 36px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main id="page"></main>
+<script type="application/json" id="project-status">/*__PROJECT_STATUS__*/</script>
+<script>
+(function () {
+  var data = JSON.parse(document.getElementById("project-status").textContent);
+  var page = document.getElementById("page");
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+  function add(parent, tag, cls, text) { var n = el(tag, cls, text); parent.appendChild(n); return n; }
+  function list(items) { return Array.isArray(items) ? items : []; }
+  function section(title) { add(page, "h2", null, title); }
+  function stat(parent, label, value, sub, attention) {
+    var c = add(parent, "div", "card stat");
+    add(c, "div", "meta", label);
+    add(c, "div", "v" + (attention ? " attention" : ""), value);
+    if (sub) add(c, "div", "meta", sub);
+    return c;
+  }
+
+  var project = data.project || {};
+  document.title = (project.name || "Project") + " — status";
+
+  // The project
+  add(page, "h1", null, project.name || "Project");
+  var meta = add(page, "div");
+  if (project.repo) add(meta, "span", "pill", project.repo);
+  if (project.base) add(meta, "span", "pill", "base: " + project.base);
+  if (data.milestone) add(meta, "span", "pill", "milestone: " + data.milestone.title);
+  list(data.planned).forEach(function (p) { add(meta, "span", "pill", "planned: " + p); });
+  list(data.flags).forEach(function (f) { add(page, "p", "warn", "⚠ " + f); });
+
+  // The one next action
+  var next = add(page, "div", "card next");
+  add(next, "div", "label", "Next action");
+  if (data.next) {
+    add(next, "p", "action", data.next.action);
+    var how = add(next, "p", "meta");
+    if (data.next.skill) add(how, "span", "skill", data.next.skill);
+    if (data.next.command) { how.appendChild(document.createTextNode("  ")); add(how, "code", null, data.next.command); }
+  } else {
+    add(next, "p", "action", "Nothing outstanding.");
+  }
+
+  // Workflow, with the recommended skill highlighted
+  section("Workflow");
+  var pipe = add(page, "div", "pipeline");
+  ["kick-off", "create-spec-issues", "implement-issue", "check-pr-comments", "merge-pr", "project-meeting"]
+    .forEach(function (s) {
+      add(pipe, "span", "stage" + (data.next && data.next.skill === s ? " current" : ""), s);
+    });
+
+  // At a glance
+  section("At a glance");
+  var stats = add(page, "div", "stats");
+  var m = data.milestone;
+  if (m) {
+    var mc = stat(stats, "Milestone " + m.title, (m.closed || 0) + " / " + (m.total || 0), "issues closed");
+    var b = add(mc, "div", "bar"), s = add(b, "span");
+    s.style.width = (m.total > 0 ? Math.min(100, Math.round(100 * (m.closed || 0) / m.total)) : 0) + "%";
+  } else {
+    stat(stats, "Milestone", "—", "no active spec");
+  }
+  var prs = list(data.prs);
+  var prAttention = prs.filter(function (p) { return p.checks === "failing" || p.unresolved > 0; }).length;
+  stat(stats, "Open PRs", prs.length, prAttention ? prAttention + " need attention" : null, prAttention > 0);
+  var f = data.findings || {};
+  stat(stats, "Inbox findings", f.count || 0, list(f.critical).length ? list(f.critical).length + " critical" : null,
+    list(f.critical).length > 0 || (f.count || 0) >= 3);
+  stat(stats, "Last meeting", data.last_meeting || "—");
+
+  // Issues
+  var issues = list(data.issues);
+  if (issues.length) {
+    section("Issues");
+    var grid = add(page, "div", "grid");
+    issues.forEach(function (i) {
+      var t = add(grid, "div", "tile " + (i.state || "open"));
+      add(t, "div", "n", "#" + i.number);
+      add(t, "div", "t", i.title || "");
+      var blockers = list(i.blocked_by);
+      add(t, "div", "s", (i.state || "open").replace("-", " ") +
+        (blockers.length ? " — waits on " + blockers.map(function (n) { return "#" + n; }).join(", ") : ""));
+    });
+    var legend = add(page, "div", "legend");
+    [["closed", "Closed"], ["in-review", "In review (open PR)"], ["in-progress", "In progress (run session)"], ["ready", "Ready"], ["blocked", "Blocked"], ["parked", "Parked (needs decision)"]]
+      .forEach(function (x) { var l = add(legend, "span"); add(l, "i", x[0]); l.appendChild(document.createTextNode(x[1])); });
+  }
+
+  // Pull requests
+  if (prs.length) {
+    section("Pull requests");
+    var pc = add(page, "div", "card table-wrap");
+    var table = add(pc, "table"), head = add(table, "tr");
+    ["PR", "Title", "Branch", "Checks", "Unresolved"].forEach(function (h) { add(head, "th", null, h); });
+    prs.forEach(function (p) {
+      var row = add(table, "tr");
+      add(row, "td", null, "#" + p.number);
+      add(row, "td", null, p.title || "");
+      add(row, "td", "meta", p.branch || "");
+      add(row, "td", "dot " + (p.checks || "none"), p.checks || "none");
+      add(row, "td", null, p.unresolved || 0);
+    });
+  }
+
+  // Findings
+  if (list(f.critical).length) {
+    section("Critical findings");
+    var fc = add(page, "div", "card");
+    var ul = add(fc, "ul");
+    f.critical.forEach(function (c) { add(ul, "li", null, c); });
+  }
+
+  // Provenance
+  add(page, "footer", null, "Generated " + (data.generated || "") +
+    " by project-status. Shows the project at that moment. Run /project-status to refresh.");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# CLAUDE.md
+
+## Important
+
+- IMPORTANT: NEVER include any secret or personal data in repository files.
+
+## Principles
+
+- Think first — state assumptions, ask if unsure, surface multiple interpretations instead of picking silently, flag simpler alternatives.
+- Simplicity first — minimum code for the ask, no speculative features/abstractions/config, no handling for impossible cases.
+- Surgical changes — touch only what's needed, don't refactor or tidy unrelated code, match existing style, remove only what your change orphaned.
+
+## `.project/`
+
+- `SPEC.md` — confirmed project vision
+- `SPEC-milestone-<###>-<slug>.md` — confirmed spec per milestone (`Status: Planned/Active/Done` header)
+- `Reports/` — completion reports
+- `Inbox/` / `Archive/` — findings awaiting / resolved
+- `Knowledge/` — durable learnings by topic
+- `Branding/` — brand guide (`BRAND.md`) and generated assets

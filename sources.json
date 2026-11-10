@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    {
+      "name": "sdd-workflow",
+      "repo": "https://github.com/tarrgor/sdd-workflow-skills.git",
+      "ref": "v1.0.0-pre1",
+      "include": [
+        "LICENSE",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        "skills/**",
+        "agents/*.md"
+      ]
+    }
+  ]
+}
