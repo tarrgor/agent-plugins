@@ -54,4 +54,8 @@ Order the units so any unit needing another's output comes after it. This is bot
 
 ## 7. Verify completeness
 
-Re-check against the units from Step 3 — every one must map to exactly one issue in the milestone (newly created or pre-existing). Report the final list in suggested implementation order, noting any skipped as already present. End with the next step: `implement-issue #<first issue with no open blockers>`.
+Re-check against the units from Step 3 — every one must map to exactly one issue in the milestone (newly created or pre-existing).
+
+Patch [local status](../_shared/status-snapshot.md) once after the spec is Active and GitHub confirms the full issue set for that milestone. Get only that milestone's facts and blocker states. On partial failure do not write a partial milestone as complete; mark the existing snapshot for reconciliation.
+
+Report the final list in suggested implementation order, noting any skipped as already present. End with the next step: `implement-issue #<first issue with no open blockers>`.

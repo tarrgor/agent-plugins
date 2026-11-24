@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Render a project's status report as `STATUS.html` at its root.
 
-`project-status` gathers the project's state and works out the report — every count, state and
-next action on the page is its reading. This script only renders: it takes that report as one JSON
+`project-status` reconciles the snapshot, and `status-report` calls this script to render it.
+This script only renders: it takes that report as one JSON
 object, drops it into `../status-template.html` and writes the page, so the page cannot disagree
 with the report and looks the same on every run.
 
-    python3 status-page.py <project-root> [report.json]     # report from the file, or stdin
+    python3 status-page.py <project-root> [report.json | --snapshot]     # report from the file, or stdin
 
 Issue and PR titles are user-written strings, so the report never travels in a shell word. It is
 embedded with `<`, `>` and `&` escaped, so nothing in it can close the script tag it sits in, and
@@ -22,6 +22,8 @@ JSON object   4 the template is missing or carries no placeholder   5 the page c
 import json
 import os
 import sys
+import tempfile
+import runpy
 
 PLACEHOLDER = "/*__PROJECT_STATUS__*/"
 TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir,
@@ -30,7 +32,7 @@ TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir,
 
 def main(argv):
     if len(argv) not in (2, 3):
-        print("usage: status-page.py <project-root> [report.json]", file=sys.stderr)
+        print("usage: status-page.py <project-root> [report.json | --snapshot]", file=sys.stderr)
         return 2
     root = argv[1]
     if not os.path.isdir(root):
@@ -38,7 +40,10 @@ def main(argv):
         return 2
 
     try:
-        if len(argv) == 3:
+        if len(argv) == 3 and argv[2] == "--snapshot":
+            store = runpy.run_path(os.path.join(os.path.dirname(__file__), "status-snapshot.py"))
+            report = store["current"](store["snapshot"](store["Path"](root)))
+        elif len(argv) == 3:
             with open(argv[2], encoding="utf-8-sig") as handle:
                 report = json.load(handle)
         else:
@@ -66,15 +71,18 @@ def main(argv):
     page = template.replace(PLACEHOLDER, data)
 
     target = os.path.join(root, "STATUS.html")
-    scratch = target + ".tmp"
+    scratch = None
     try:
-        with open(scratch, "w", encoding="utf-8", newline="\n") as handle:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n",
+                                         dir=root, delete=False) as handle:
+            scratch = handle.name
             handle.write(page)
         os.replace(scratch, target)
     except OSError as err:
         print("status-page.py: cannot write %s: %s" % (target, err), file=sys.stderr)
         try:
-            os.remove(scratch)
+            if scratch is not None:
+                os.remove(scratch)
         except OSError:
             pass
         return 5

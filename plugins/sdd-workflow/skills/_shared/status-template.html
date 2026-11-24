@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  The status page `project-status` writes to a project's root on every run, through
+  The page `status-report` writes to a project's root, through
   `scripts/status-page.py`, which puts the report in place of the placeholder below. Everything on
   the page is the skill's reading; this file only lays it out. Strings are inserted as text, never
   as markup: issue and PR titles are user-written. No network, so it opens from file://.
@@ -203,8 +203,11 @@ footer { margin-top: 36px; font-size: 12px; color: var(--muted); }
   }
 
   // Provenance
-  add(page, "footer", null, "Generated " + (data.generated || "") +
-    " by project-status. Shows the project at that moment. Run /project-status to refresh.");
+  var stamp = data._status;
+  if (stamp && stamp.refresh_needed) add(page, "p", "warn", "Some status details need a full refresh.");
+  add(page, "footer", null, stamp
+    ? "Last full refresh: " + stamp.last_full_refresh + ". Snapshot updated: " + stamp.updated_at + ". Run /project-status to reconcile."
+    : "Snapshot date: " + (data.generated || "unknown") + ". Run /project-status to reconcile.");
 })();
 </script>
 </body>

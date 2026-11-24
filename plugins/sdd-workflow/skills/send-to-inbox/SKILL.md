@@ -53,6 +53,8 @@ Write it in the language the target's `.project/` documents use. Size it to its 
 - Create the target's `.project/` layout directories if any are missing, per conventions.
 - Write the file. Do not commit — the target may have unrelated work in progress or another branch checked out; `project-meeting` commits the Inbox when it consumes the finding.
 
+After the confirmed write, update the **target** root's [status snapshot](../_shared/status-snapshot.md) for the affected finding, or flag that findings need reconciliation if the affected sources are ambiguous. Do not commit generated status.
+
 ## 5. Report
 
 State the written path and the title. Recommend `project-meeting` in the target project to triage it.

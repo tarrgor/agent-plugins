@@ -34,6 +34,8 @@ A run never changes the policy.
 
 Repeat until Step 4 applies; re-evaluate after every session result and every merge. Feedback means unresolved review threads — plain PR comments are not seen by the run.
 
+Track confirmed changes in the coordinator's [local snapshot](../_shared/status-snapshot.md): issue labels/parked questions, worker PRs, merges, and findings this run actually publishes. Reuse the observed outcomes, only verify affected resources, and never copy a worker's snapshot. Do not block the run on a cache failure.
+
 1. **File parked questions** — each `needs-decision:` issue comment not yet filed: write it to `.project/Inbox/findings-<slug>.md` and commit it per the base-branch rule.
 2. **Stop check** — meeting due per `next-action.md` → Step 4. Running sessions finish; nothing new starts and nothing more is merged.
 3. **Feedback** — an open `issue/*` PR with unresolved review threads whose issue is neither `needs-decision` nor `in-progress`: remove `verified`, label the issue `in-progress`, start a session (as in step 5) with the brief `Run the check-pr-comments skill for PR #<n> with mode: non-interactive. End with its RESULT line.`

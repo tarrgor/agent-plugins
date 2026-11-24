@@ -71,6 +71,8 @@ GitHub operations: `../_shared/github.md` — the `gh` commands below are the re
 - Push the branch and open a non-draft PR targeting the base branch from Step 2 (`gh pr create --base <base>`), with a summary and the verification commands that passed.
 - **The PR body must include `Closes #<number>` on its own line** so GitHub auto-closes the issue on merge. Verify this line is present in the created PR before reporting completion — do not rely on a generic PR template to add it.
 
+After GitHub confirms the PR, upsert its open record per the [status delta contract](../_shared/status-snapshot.md). Refresh its affected PR/finding facts after confirmed review changes; do not re-gather project status.
+
 ## 8. Report completion
 
 Write `.project/Reports/<slug>.md` — a short report of what was implemented and how it was verified. `project-meeting` and `project-status` read these reports; issue-level dedup lives in the GitHub milestone, not here.

@@ -42,6 +42,8 @@ git pull --ff-only
 
 Confirm the merge and remote branch deletion. For a normal branch, also confirm the local branch was deleted and the base branch is up to date; for a linked worktree, note that the local branch was left in place. Note the issue this closed and, if it was the last open issue in its milestone (`gh issue view <issue-number> --json milestone`, then `gh issue list --milestone "<title>" --state open` — treat the just-merged issue as closed even if it still shows open), say so. Never close the milestone here — that is `project-meeting`'s job.
 
+Once GitHub confirms the merge, patch the [local snapshot](../_shared/status-snapshot.md): remove the PR and patch the issue only if its closure is separately confirmed. If closure is still pending, request a later reconciliation via `refresh_needed`; this does not change the workflow's separate last-issue hint.
+
 ## 6. Check the Inbox and suggest the next step
 
 Use the rules in `../_shared/next-action.md` (relative to this skill's directory), counting the just-merged PR and its issue as closed.

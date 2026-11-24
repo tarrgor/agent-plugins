@@ -96,6 +96,8 @@ The user did not write the implementation and cannot judge a decision phrased in
 
 Write `.project/Archive/MEETING-<YYYY-MM-DD>.md`: date, each finding and its resolved outcome (including stale Knowledge entries corrected or removed, and the changes made without asking), work completed, knowledge gained, next steps agreed, and any milestone closed or kept open. This is the marker the next meeting's Step 1 reads from.
 
+Patch [local status](../_shared/status-snapshot.md) for confirmed milestone closures, issues created in the still-active milestone, and changed Inbox facts. Include the new meeting date after the archive write succeeds; do not rescan the project.
+
 ## 8. Commit and push
 
 - `.project/` changes belong on the base branch (per conventions: `develop` if present, else the default). If a feature branch is checked out, say so and `git switch <base>` first — never discard, stash, or sweep in unrelated uncommitted changes; if switching is unsafe, stop and ask.

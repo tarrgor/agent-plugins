@@ -54,4 +54,6 @@ Summarize the full plan. Do not write anything until the user explicitly confirm
 
 End by suggesting `create-spec-issues` to break the confirmed spec into issues.
 
+After writing a confirmed Planned spec, patch the [local snapshot](../_shared/status-snapshot.md) for that planned title, without gathering again.
+
 If `.project/.obsidian/` does not exist, add a one-line hint that the user can run `/sdd-workflow:create-obsidian-vault` to browse `.project/` in Obsidian. Never run it yourself — it is user-invoked only.

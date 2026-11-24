@@ -35,4 +35,6 @@ GitHub operations: `../_shared/github.md` — the `gh` commands below are the re
 - Update `.project/Reports/<slug>.md` with the new verification results.
 - Commit and push the fixes, together with those `.project/` files, to the existing branch.
 - Reply to each addressed comment confirming the fix, and resolve each addressed review thread (`resolveReviewThread` mutation via `gh api graphql`; thread IDs from the PR's `reviewThreads`).
+
+After replies and thread resolutions are confirmed, patch the affected PR review/check facts per [status-snapshot.md](../_shared/status-snapshot.md). Include affected finding facts or mark them for reconciliation.
 - Non-interactive: before the result line, run one independent review exactly as `implement-issue` Step 9 and report its verdict as `unresolved` — the fixes must not merge on this session's own judgment.

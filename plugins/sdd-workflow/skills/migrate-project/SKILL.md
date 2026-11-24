@@ -63,6 +63,8 @@ Migrate only the missing/non-compliant items from Step 1's diagnosis:
 - `git mv` each migrated source doc to `.project/Archive/` (names preserved), and write `.project/Archive/MIGRATION-<YYYY-MM-DD>.md`: the source → destination map, adopted issues, and remaining gaps. This record is the re-run marker.
 - Commit on the base branch (per conventions), staging only the migrated and moved files — never unrelated working-tree changes; if a feature branch is checked out and switching is unsafe, stop and ask — then push. If the push is rejected because the base branch is protected, fall back to the branch-and-PR flow in `../_shared/conventions.md` (branch `chore/migrate-project`) and report that PR instead. Note that `git mv` renames are part of the commit, so the PR carries the archive moves too.
 
+After confirmed adoption and an Active spec, patch the active milestone scope in the [local snapshot](../_shared/status-snapshot.md) if one exists.
+
 ## 7. Report and suggest the next step
 
 Summarize compliance: what was migrated, what was already compliant, what gaps remain. If `.project/.obsidian/` does not exist, add a one-line hint that the user can run `/sdd-workflow:create-obsidian-vault` to browse the migrated docs in Obsidian — never run it yourself, it is user-invoked only. Then name the next step, first match wins: vision or milestone-scope gaps → `kick-off`; a `Planned` spec → `create-spec-issues`; otherwise → `project-status`.
